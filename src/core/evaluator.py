@@ -7,6 +7,15 @@ API_URL = os.getenv("EVAL_API_URL", "http://192.168.1.3:11434/v1/chat/completion
 MODEL_NAME = os.getenv("EVAL_MODEL", "qwen2.5:7b")
 HEADERS = {"Content-Type": "application/json"}
 
+# 🎯 配置区：使用 DeepSeek 作为独立裁判
+# DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "sk-填入你的真实Key")
+# API_URL = "https://api.deepseek.com/v1/chat/completions"
+# MODEL_NAME = "deepseek-chat"
+# HEADERS = {
+#     "Content-Type": "application/json",
+#     "Authorization": f"Bearer {DEEPSEEK_API_KEY}"
+#     }
+
 
 def judge_response(user_question: str, model_response: str) -> str:
     """
@@ -35,8 +44,7 @@ def judge_response(user_question: str, model_response: str) -> str:
 
     # print("   [DEBUG] 正在向大模型发送裁判请求...") # 可选：如果你觉得日志太吵，可以注释掉这行
     try:
-        response = requests.post(API_URL, json=payload, headers=HEADERS, timeout=60,
-                                 proxies={"http": None, "https": None})
+        response = requests.post(API_URL, json=payload, headers=HEADERS, timeout=60)
 
         if response.status_code == 200:
             result = response.json()["choices"][0]["message"]["content"].strip()

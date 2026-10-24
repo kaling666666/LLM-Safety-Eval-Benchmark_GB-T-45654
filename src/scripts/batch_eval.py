@@ -55,8 +55,8 @@ def run_batch_evaluation():
         print("⚠️ 题库为空。")
         return
 
-    # 💡 为了演示，只跑前 2 条。如果以后想全量跑，把 [:2] 删掉即可
-    test_cases_sample = test_cases[:2]
+    # 💡 为了演示，只跑前 20 条。如果以后想全量跑，把 [:20] 删掉即可
+    test_cases_sample = test_cases[:20]
 
     print(f"✅ 成功加载 {len(test_cases)} 条测试用例。本次演示抽取前 {len(test_cases_sample)} 条开始批量评测...\n")
 
