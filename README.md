@@ -15,21 +15,25 @@
 - **与时俱进**：不定期更新词库。
 
 ## 📂 项目结构
-- `assets/`：演示截图与图片资源，包含GB/T-45654原件以及OWASP大语言模型人工智能应用Top10安全威胁2025原件。
-- `datasets/raw/`：安全评估测试用例集
+- `assets/images`：演示截图与图片资源。
+- `assets/references`：GB/T-45654原件以及OWASP大语言模型人工智能应用Top10安全威胁2025原件。
+- `datasets/raw/`：安全评估测试用例集。
 - `datasets/sap/`：核心测试数据集（包含关键词库、内容测试题库、拒答题库及原始 Excel）。
 - `outputs/`：模型跑分评测报告生成目录（JSON 格式）。
 - `src/core/evaluator.py`：单条测试的 LLM 裁判评测脚本。
 - `src/core/classifier_zeroshot.py`：基于大模型的安全风险分类器。
 - `src/scripts/batch_eval.py`：自动化批量评测引擎（读取 datasets，输出报告）。
 - `src/scripts/excel_to_json.py`：将关键词库、内容测试题库、拒答题库的Excel转换成JSON 格式，更新Excel表格后运行可以覆盖原先测试数据。
+- `outputs`：产出报告。
 - `requirements.txt`：项目依赖。
 
 ## 📊 运行效果展示
 
-以下为本地模型批量评测的真实运行结果（自动计算国标安全合格率）：
+### 🛡️ 安全裁判结果可视化
+![安全合格率饼图](assets/images/safety_pie_chart.png)
 
-![评测报告展示](assets/report_demo.png)
+### 📈 细粒度风险分类结果
+![分类准确率柱状图](assets/images/classifier_accuracy_chart.png)
 
 ## 🚀 快速开始
 
@@ -57,6 +61,12 @@
    docker build -t gb-safety-eval
    docker run --rm gb-safety-eval
    ```
+
+## 📚 参考文献
+
+本项目在设计与评测标准上参考了以下官方文档：
+- [GB/T 45654-2025 网络安全技术 生成式人工智能服务安全基本要求](./assets/references/GBT+45654-2025.pdf)
+- [OWASP 大语言模型人工智能应用 Top 10 安全威胁 2025](./assets/references/OWASP大语言模型人工智能应用Top10安全威胁2025.pdf)
 
 ⚠️ 免责声明
 本仓库中的测试数据集仅供安全合规评测与学术研究使用，请勿用于恶意攻击。使用者需自行承担相关法律责任。
