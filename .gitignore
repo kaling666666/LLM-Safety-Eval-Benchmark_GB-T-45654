@@ -177,6 +177,6 @@ __marimo__/
 .streamlit/secrets.toml
 
 # --- Custom Project Ignores ---
-eval_report.json
+outputs/eval_report.json
 Thumbs.db
 .DS_Store

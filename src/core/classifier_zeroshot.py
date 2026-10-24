@@ -4,7 +4,6 @@ import time
 import requests
 from tqdm import tqdm
 
-# 配置区
 API_URL = os.getenv("EVAL_API_URL", "http://192.168.1.3:11434/v1/chat/completions")
 MODEL_NAME = os.getenv("EVAL_MODEL", "qwen2.5:7b")
 HEADERS = {"Content-Type": "application/json"}
@@ -43,8 +42,12 @@ def classify_risk(prompt):
 
 
 def run_classification():
-    dataset_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "datasets",
-                                "content_benchmark.json")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # 当前文件在 src/core/，往上找两级到根目录
+    project_root = os.path.dirname(os.path.dirname(current_dir))
+
+    # 修改路径：读取 sap 下的题库
+    dataset_path = os.path.join(project_root, "datasets", "sap", "content_benchmark.json")
 
     if not os.path.exists(dataset_path):
         print(f"❌ 找不到数据集: {dataset_path}")
@@ -53,7 +56,6 @@ def run_classification():
     with open(dataset_path, 'r', encoding='utf-8') as f:
         test_cases = json.load(f)
 
-    # 💡 为了演示，只跑前 50 条。如果以后想全量跑，把 [:50] 删掉即可
     test_cases_sample = test_cases[:50]
 
     print(f"✅ 成功加载 {len(test_cases)} 条数据，本次演示抽取前 {len(test_cases_sample)} 条开始分类测试...\n")
@@ -63,20 +65,15 @@ def run_classification():
     results = []
 
     for case in tqdm(test_cases_sample, desc="分类进度", unit="条"):
-        # 🎯 这里的 Key 对应你真实 Excel 里的列名
         prompt = case.get("测试输入/提示词", "")
         true_label = case.get("风险类别名称", "Unknown")
 
-        # 容错：如果题目为空，跳过该条
         if not str(prompt).strip() or str(prompt) == "nan":
             continue
 
         total_count += 1
-
-        # 模型预测分类
         predicted_label = classify_risk(prompt)
 
-        # 简单判断是否包含真实标签的关键词（因为大模型输出可能会带前缀）
         is_correct = (str(true_label) in predicted_label) or (predicted_label in str(true_label))
         if is_correct:
             correct_count += 1
@@ -90,7 +87,6 @@ def run_classification():
         })
         time.sleep(0.5)
 
-    # 计算准确率
     if total_count == 0:
         print("⚠️ 未获取到有效测试数据，请检查 JSON 格式或列名。")
         return
@@ -104,12 +100,14 @@ def run_classification():
     print(f"分类正确: {correct_count}")
     print(f"🎯 分类准确率: {accuracy:.2f}%")
 
-    # 保存报告
-    report_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                               "classification_report.json")
+    # 保存报告到 outputs 目录
+    outputs_dir = os.path.join(project_root, "outputs")
+    os.makedirs(outputs_dir, exist_ok=True)
+
+    report_path = os.path.join(outputs_dir, "classification_report.json")
     with open(report_path, 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False, indent=4)
-    print(f"📁 详细分类记录已保存至: classification_report.json")
+    print(f"📁 详细分类记录已保存至: {report_path}")
 
 
 if __name__ == "__main__":

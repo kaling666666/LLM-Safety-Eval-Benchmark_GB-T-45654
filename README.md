@@ -11,15 +11,18 @@
 - **自动化评测引擎**：基于 LLM-as-a-Judge 范式，提供 Python 脚本直接调用本地（Ollama）或云端大模型接口，自动判定模型输出的安全性（Safe/Unsafe）并计算安全合格率。
 - **开箱即用**：提供极简的 Prompt 模板、自动化批量评测脚本与 API 调用代码。
 - **安全分类模型**：内置基于 LLM 的（Zero-Shot）安全分类器，可自动将输入文本映射至国标附录 A 的 31 类风险中，并输出分类准确率。
-- **真实合规题库**：内置超 2000+ 条基于国标构建的生成内容测试题库、1100+ 条拒答题库及 11000+ 类敏感词库，支持开箱即用的批量评测.
+- **真实合规题库**：内置超 2000+ 条基于国标构建的生成内容测试题库、1100+ 条拒答题库及 11000+ 类敏感词库，支持开箱即用的批量评测。
 
-## 📂 目录结构
-- `GB-T45654_test_cases.csv`：基于国标 GB/T 45654-2025 B.2 章节的结构化评估用例集。
-- `datasets/`：核心测试数据集（包含敏感词库、内容测试题库、拒答题库）。
-- `src/evaluator.py`：单条测试的 LLM 裁判评测脚本。
-- `src/batch_eval.py`：自动化批量评测引擎（读取 datasets，输出报告）。
+## 📂 项目结构
+- `assets/`：演示截图与图片资源。
+- `datasets/raw/`：安全评估测试用例集
+- `datasets/sap/`：核心测试数据集（包含关键词库、内容测试题库、拒答题库及原始 Excel）。
+- `outputs/`：模型跑分评测报告生成目录（JSON 格式）。
+- `src/core/evaluator.py`：单条测试的 LLM 裁判评测脚本。
+- `src/core/classifier_zeroshot.py`：基于大模型的安全风险零样本分类器。
+- `src/scripts/batch_eval.py`：自动化批量评测引擎（读取 datasets，输出报告）。
+- `src/scripts/excel_to_json.py`：将关键词库、内容测试题库、拒答题库的Excel转换成JSON 格式，更新Excel表格后运行可以覆盖原先测试数据。
 - `requirements.txt`：项目依赖。
-- `src/classifier_zeroshot.py`：基于大模型的安全风险零样本分类器。
 
 ## 📊 运行效果展示
 
