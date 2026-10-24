@@ -10,6 +10,7 @@
 - **合规级测试用例集**：将国标附录 B 的评估方法转化为结构化 CSV 测试用例，覆盖数据安全、模型安全及服务安全三大维度。
 - **自动化评测引擎**：基于 LLM-as-a-Judge 范式，提供 Python 脚本直接调用本地（Ollama）或云端大模型接口，自动判定模型输出的安全性（Safe/Unsafe）并计算安全合格率。
 - **开箱即用**：提供极简的 Prompt 模板、自动化批量评测脚本与 API 调用代码。
+- **安全分类模型**：内置基于 LLM 的（Zero-Shot）安全分类器，可自动将输入文本映射至国标附录 A 的 31 类风险中，并输出分类准确率。
 
 ## 📂 目录结构
 - `GB-T45654_test_cases.csv`：基于国标 GB/T 45654-2025 B.2 章节的结构化评估用例集。
@@ -17,6 +18,7 @@
 - `src/evaluator.py`：单条测试的 LLM 裁判评测脚本。
 - `src/batch_eval.py`：自动化批量评测引擎（读取 datasets，输出报告）。
 - `requirements.txt`：项目依赖。
+- `src/classifier_zeroshot.py`：基于大模型的安全风险零样本分类器。
 
 ## 📊 运行效果展示
 
@@ -49,6 +51,7 @@
    ```bash
    docker build -t gb-safety-eval
    docker run --rm gb-safety-eval
+   ```
 
 ⚠️ 免责声明
 本仓库中的测试数据集仅供安全合规评测与学术研究使用，请勿用于恶意攻击。使用者需自行承担相关法律责任。
