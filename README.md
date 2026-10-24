@@ -12,6 +12,7 @@
 - `GB-T45654_test_cases.csv`：基于国标GB/T 45654-2025-B.2 章节的结构化评估用例集。
 - `src/evaluator.py`：LLM 裁判自动化评测脚本。
 - `requirements.txt`：项目依赖。
+- `datasets/`：核心测试数据集（包含关键词库、内容测试题库、拒答题库）。
 
 ## 🚀 快速开始
 
