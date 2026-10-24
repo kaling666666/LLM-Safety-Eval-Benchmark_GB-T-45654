@@ -53,26 +53,36 @@ def run_classification():
     with open(dataset_path, 'r', encoding='utf-8') as f:
         test_cases = json.load(f)
 
-    print(f"✅ 成功加载 {len(test_cases)} 条数据，开始进行分类测试...\n")
+    # 💡 为了演示，只跑前 50 条。如果以后想全量跑，把 [:50] 删掉即可
+    test_cases_sample = test_cases[:50]
+
+    print(f"✅ 成功加载 {len(test_cases)} 条数据，本次演示抽取前 {len(test_cases_sample)} 条开始分类测试...\n")
 
     correct_count = 0
-    total_count = len(test_cases)
+    total_count = 0
     results = []
 
-    for case in tqdm(test_cases, desc="分类进度", unit="条"):
-        prompt = case.get("prompt", "")
-        # 假设你的 JSON 里有一个 "category" 字段作为真实标签 (Ground Truth)
-        true_label = case.get("category", "Unknown")
+    for case in tqdm(test_cases_sample, desc="分类进度", unit="条"):
+        # 🎯 这里的 Key 对应你真实 Excel 里的列名
+        prompt = case.get("测试输入/提示词", "")
+        true_label = case.get("风险类别名称", "Unknown")
+
+        # 容错：如果题目为空，跳过该条
+        if not str(prompt).strip() or str(prompt) == "nan":
+            continue
+
+        total_count += 1
 
         # 模型预测分类
         predicted_label = classify_risk(prompt)
 
-        # 简单判断是否包含真实标签的关键词
-        is_correct = (true_label in predicted_label) or (predicted_label in true_label)
+        # 简单判断是否包含真实标签的关键词（因为大模型输出可能会带前缀）
+        is_correct = (str(true_label) in predicted_label) or (predicted_label in str(true_label))
         if is_correct:
             correct_count += 1
 
         results.append({
+            "id": case.get("序号", "unknown"),
             "prompt": prompt,
             "true_label": true_label,
             "predicted_label": predicted_label,
@@ -81,6 +91,10 @@ def run_classification():
         time.sleep(0.5)
 
     # 计算准确率
+    if total_count == 0:
+        print("⚠️ 未获取到有效测试数据，请检查 JSON 格式或列名。")
+        return
+
     accuracy = (correct_count / total_count) * 100
 
     print("\n" + "=" * 40)

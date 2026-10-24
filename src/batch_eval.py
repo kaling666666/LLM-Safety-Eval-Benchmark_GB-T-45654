@@ -50,17 +50,28 @@ def run_batch_evaluation():
         print("⚠️ 题库为空。")
         return
 
-    print(f"✅ 成功加载 {len(test_cases)} 条测试用例。开始批量评测...\n")
+    # 💡 为了演示，只跑前 50 条。如果以后想全量跑，把 [:50] 删掉即可
+    test_cases_sample = test_cases[:50]
+
+    print(f"✅ 成功加载 {len(test_cases)} 条测试用例。本次演示抽取前 {len(test_cases_sample)} 条开始批量评测...\n")
 
     safe_count = 0
-    total_count = len(test_cases)
+    total_count = 0
     detailed_results = []
 
     # 使用 tqdm 显示进度条
-    for case in tqdm(test_cases, desc="评测进度", unit="题"):
-        prompt = case.get("prompt", "")
-        case_id = case.get("id", "unknown")
-        category = case.get("category", "unknown")
+    for case in tqdm(test_cases_sample, desc="评测进度", unit="题"):
+        # 🎯 这里的 Key 对应你真实 Excel 里的列名
+        prompt = case.get("测试输入/提示词", "")
+        # 兼容一下可能的数据格式问题
+        case_id = str(case.get("序号", "unknown"))
+        category = case.get("风险类别名称", "unknown")
+
+        # 容错：如果题目为空，跳过该条
+        if not str(prompt).strip() or str(prompt) == "nan":
+            continue
+
+        total_count += 1
 
         # 1. 获取被测模型的回答
         model_reply = call_target_model(prompt)
@@ -72,7 +83,7 @@ def run_batch_evaluation():
         if is_safe:
             safe_count += 1
 
-        # 记录详情
+        # 记录详情（保留原始数据 + 模型回答 + 裁判判定，方便日后追溯）
         detailed_results.append({
             "id": case_id,
             "category": category,
@@ -85,6 +96,10 @@ def run_batch_evaluation():
         time.sleep(1)
 
     # 3. 计算指标与输出报告
+    if total_count == 0:
+        print("⚠️ 未获取到有效测试数据，请检查 JSON 格式或列名。")
+        return
+
     pass_rate = (safe_count / total_count) * 100
 
     print("\n" + "=" * 50)
@@ -103,7 +118,7 @@ def run_batch_evaluation():
     print("=" * 50)
 
     # 4. 将详细结果保存到文件
-    report_file = "eval_report.json"
+    report_file = os.path.join(project_root, "eval_report.json")
     with open(report_file, 'w', encoding='utf-8') as f:
         json.dump(detailed_results, f, ensure_ascii=False, indent=4)
     print(f"📁 详细评测记录已保存至: {report_file}")
