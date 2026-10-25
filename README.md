@@ -35,6 +35,8 @@
 ### 📈 细粒度风险分类结果
 ![分类准确率柱状图](assets/images/classifier_accuracy_chart.png)
 
+> 📚 **深度阅读**：请查看我们的 [《国标级大模型安全评测方案》(docs/security_eval_plan.md)](./docs/security_eval_plan.md)
+
 ## 🚀 快速开始
 
 ### 方式一：本地 Python 环境运行
